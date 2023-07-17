@@ -40,12 +40,18 @@ def update_requirements_file(requirements_file, packages):
 
 def install_and_update_requirements(dev_flag, packages):
     for package_name in packages:
-        subprocess.check_call(["pip", "install", package_name])
+        if "git+" in package_name:
+            subprocess.check_call(["pip", "install", package_name])
+            # Assuming the package name is the repository name
+            package_name = package_name.split("/")[-1].split(".git")[0]
+        else:
+            subprocess.check_call(["pip", "install", package_name])
 
     requirements_file = find_requirements_file(dev_flag)
 
     if requirements_file is not None:
         update_requirements_file(requirements_file, packages)
+
 
 def main():
     parser = argparse.ArgumentParser()
